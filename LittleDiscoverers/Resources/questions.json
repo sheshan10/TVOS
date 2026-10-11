@@ -1,0 +1,124 @@
+{
+  "questions": [
+    {
+      "id": "animals-cat",
+      "topic": "animals",
+      "imageName": "animal_cat",
+      "correctAnswer": "Cat",
+      "choices": ["Dog", "Cat", "Rabbit"],
+      "fact": "Cats are mammals. They use whiskers to feel what is close to them."
+    },
+    {
+      "id": "animals-dog",
+      "topic": "animals",
+      "imageName": "animal_dog",
+      "correctAnswer": "Dog",
+      "choices": ["Cat", "Dog", "Fish"],
+      "fact": "Dogs are mammals. A dog can learn words and signals from people."
+    },
+    {
+      "id": "animals-elephant",
+      "topic": "animals",
+      "imageName": "animal_elephant",
+      "correctAnswer": "Elephant",
+      "choices": ["Rabbit", "Elephant", "Cat"],
+      "fact": "Elephants are the largest land animals. They use a trunk to smell, drink, and lift."
+    },
+    {
+      "id": "animals-rabbit",
+      "topic": "animals",
+      "imageName": "animal_rabbit",
+      "correctAnswer": "Rabbit",
+      "choices": ["Cat", "Rabbit", "Dog"],
+      "fact": "Rabbits are mammals. Their long ears help them hear sounds around them."
+    },
+    {
+      "id": "animals-fish",
+      "topic": "animals",
+      "imageName": "animal_fish",
+      "correctAnswer": "Fish",
+      "choices": ["Dog", "Fish", "Elephant"],
+      "fact": "Fish live in water. They breathe with gills instead of lungs."
+    },
+    {
+      "id": "fruits-apple",
+      "topic": "fruits",
+      "imageName": "fruit_apple",
+      "correctAnswer": "Apple",
+      "choices": ["Banana", "Apple", "Orange"],
+      "fact": "Apples grow on trees. Their skin can be red, green, or yellow."
+    },
+    {
+      "id": "fruits-banana",
+      "topic": "fruits",
+      "imageName": "fruit_banana",
+      "correctAnswer": "Banana",
+      "choices": ["Grapes", "Banana", "Apple"],
+      "fact": "Bananas grow in bunches. The fruit is soft and sweet inside a peel."
+    },
+    {
+      "id": "fruits-orange",
+      "topic": "fruits",
+      "imageName": "fruit_orange",
+      "correctAnswer": "Orange",
+      "choices": ["Apple", "Orange", "Watermelon"],
+      "fact": "Oranges grow on trees. They are juicy citrus fruits."
+    },
+    {
+      "id": "fruits-grapes",
+      "topic": "fruits",
+      "imageName": "fruit_grapes",
+      "correctAnswer": "Grapes",
+      "choices": ["Banana", "Grapes", "Orange"],
+      "fact": "Grapes grow in bunches on vines. A grape can be green, red, or purple."
+    },
+    {
+      "id": "fruits-watermelon",
+      "topic": "fruits",
+      "imageName": "fruit_watermelon",
+      "correctAnswer": "Watermelon",
+      "choices": ["Apple", "Watermelon", "Grapes"],
+      "fact": "Watermelons grow on vines. They have a thick green rind and juicy flesh inside."
+    },
+    {
+      "id": "vehicles-car",
+      "topic": "vehicles",
+      "imageName": "vehicle_car",
+      "correctAnswer": "Car",
+      "choices": ["Bus", "Car", "Train"],
+      "fact": "Cars travel on roads. Most cars have four wheels."
+    },
+    {
+      "id": "vehicles-bus",
+      "topic": "vehicles",
+      "imageName": "vehicle_bus",
+      "correctAnswer": "Bus",
+      "choices": ["Car", "Bus", "Boat"],
+      "fact": "Buses travel on roads and carry many people. They stop so people can get on and off."
+    },
+    {
+      "id": "vehicles-train",
+      "topic": "vehicles",
+      "imageName": "vehicle_train",
+      "correctAnswer": "Train",
+      "choices": ["Airplane", "Train", "Car"],
+      "fact": "Trains travel on tracks. They can carry people or goods."
+    },
+    {
+      "id": "vehicles-boat",
+      "topic": "vehicles",
+      "imageName": "vehicle_boat",
+      "correctAnswer": "Boat",
+      "choices": ["Bus", "Boat", "Airplane"],
+      "fact": "Boats travel on water. Their shape helps them float."
+    },
+    {
+      "id": "vehicles-airplane",
+      "topic": "vehicles",
+      "imageName": "vehicle_airplane",
+      "correctAnswer": "Airplane",
+      "choices": ["Train", "Airplane", "Boat"],
+      "fact": "Airplanes fly through the air. Their wings help lift them."
+    }
+  ]
+}

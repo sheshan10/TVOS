@@ -1,0 +1,31 @@
+# Xcode and macOS
+.DS_Store
+*.xcuserstate
+xcuserdata/
+*.xcscmblueprint
+DerivedData/
+build/
+.build/
+
+# Swift Package Manager
+.swiftpm/
+Packages/
+Package.resolved
+
+# Signing and secrets
+*.mobileprovision
+*.p12
+*.cer
+*.certSigningRequest
+.env
+*.pem
+
+# Archives and symbols
+*.ipa
+*.dSYM
+*.dSYM.zip
+
+# Editors
+.idea/
+*.moved-aside
+*~

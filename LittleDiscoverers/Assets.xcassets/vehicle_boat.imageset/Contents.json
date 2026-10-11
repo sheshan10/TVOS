@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "vehicle_boat.jpg",
+      "idiom" : "tv"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

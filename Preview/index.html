@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Little Discoverers — screen preview</title>
+  <style>
+    :root {
+      --cream: #fff6e8;
+      --ink: #1f2a2e;
+      --teal: #0e7d74;
+      --teal-dark: #084743;
+      --card: #ffffff;
+      --mist: #e4f6f3;
+      --coral: #b5463c;
+      --gold: #da9e25;
+      --success: #25825d;
+      --muted: rgba(31, 42, 46, 0.15);
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; overflow: hidden; }
+    body {
+      background: var(--cream);
+      color: var(--ink);
+      font-family: "Segoe UI", "Avenir Next", sans-serif;
+    }
+    .bar {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      padding: 6px 12px;
+      background: #173330;
+      color: white;
+      font-size: 13px;
+      white-space: nowrap;
+      overflow-x: auto;
+    }
+    .bar span { opacity: 0.85; margin-right: 6px; }
+    .bar button {
+      border: 0;
+      border-radius: 999px;
+      padding: 6px 10px;
+      background: transparent;
+      color: white;
+      font: inherit;
+      cursor: pointer;
+      flex: 0 0 auto;
+    }
+    .bar button.on, .bar button:hover { background: var(--teal); }
+    .screen { display: none; height: calc(100vh - 40px); padding: 16px 28px 14px; overflow: hidden; }
+    .screen.on { display: flex; flex-direction: column; gap: 12px; }
+    h1 { font-size: clamp(28px, 4vw, 52px); line-height: 1; margin: 0; font-weight: 800; }
+    h2 { font-size: clamp(26px, 2.6vw, 40px); margin: 0; }
+    .tag { color: var(--teal); font-size: clamp(20px, 2vw, 32px); font-weight: 700; margin: 6px 0 0; }
+    .row { display: flex; gap: 18px; min-height: 0; }
+    .grow { flex: 1; }
+    .samples { height: min(34vh, 260px); flex: 0 0 auto; }
+    .samples .card, .topic {
+      background: var(--card);
+      border-radius: 24px;
+      padding: 10px;
+    }
+    .samples img, .topic img, .mystery img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: var(--cream);
+      border-radius: 18px;
+    }
+    .samples .card { display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .samples img { max-height: 100%; }
+    button.ui {
+      border: 3px solid transparent;
+      border-radius: 18px;
+      padding: 12px 16px;
+      font: inherit;
+      font-size: clamp(15px, 1.5vw, 22px);
+      font-weight: 800;
+      cursor: pointer;
+      color: white;
+      background: var(--teal);
+    }
+    button.ui:hover, button.ui:focus {
+      background: var(--teal-dark);
+      outline: 6px solid var(--teal);
+      transform: scale(1.03);
+    }
+    button.ghost {
+      background: white;
+      color: var(--ink);
+      border-color: rgba(14, 125, 116, 0.35);
+    }
+    button.ghost:hover, button.ghost:focus { background: var(--mist); }
+    button.ui:disabled { opacity: 0.42; transform: none; cursor: default; }
+    .actions { display: flex; gap: 16px; flex-wrap: wrap; }
+    .topic { flex: 1; display: flex; flex-direction: column; gap: 8px; text-align: left; }
+    .topic img { height: min(18vh, 140px); }
+    .topic p { margin: 0; font-size: 20px; }
+    .best { color: var(--teal-dark); font-weight: 700; }
+    .quiz-main { flex: 1; min-height: 0; }
+    .mystery { flex: 1.05; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+    .mystery img { flex: 1; min-height: 0; max-height: 46vh; background: white; border-radius: 24px; padding: 8px; }
+    .answers { flex: 1; display: flex; flex-direction: column; gap: 10px; min-width: 0; justify-content: center; }
+    #quiz-choices { display: flex; flex-direction: column; gap: 8px; }
+    .answer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    }
+    .meta, .steps, .note, .stat { font-size: clamp(16px, 1.4vw, 22px); }
+    .progress { display: flex; gap: 8px; }
+    .progress i { flex: 1; height: 14px; border-radius: 6px; background: var(--muted); display: block; }
+    .progress i.done { background: var(--teal); }
+    .feedback { min-height: 72px; display: flex; gap: 10px; align-items: flex-start; font-size: clamp(18px, 1.5vw, 24px); font-weight: 650; }
+    .ok { color: var(--success); }
+    .try { color: var(--coral); }
+    .stars { font-size: 56px; letter-spacing: 6px; color: var(--gold); margin: 0; }
+    .stars span.empty { color: rgba(31, 42, 46, 0.28); }
+    .panel {
+      background: white;
+      border-radius: 24px;
+      padding: 18px 20px;
+    }
+    .stat { display: flex; flex-direction: column; gap: 6px; }
+    .note { line-height: 1.35; }
+    .steps { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .step { background: white; border-radius: 18px; padding: 14px 16px; display: flex; gap: 12px; }
+    .step b { color: var(--teal); font-size: 28px; }
+    .modal {
+      position: fixed; inset: 40px 0 0 0;
+      background: rgba(31, 42, 46, 0.35);
+      display: none; align-items: center; justify-content: center;
+    }
+    .modal.on { display: flex; }
+    .dialog { background: white; border-radius: 28px; padding: 28px; width: min(640px, 90vw); }
+    .dialog p { font-size: 22px; }
+    header.top { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; }
+  </style>
+</head>
+<body>
+  <div class="bar">
+    <span>Preview only. Click a screen.</span>
+    <button id="nav-home" type="button">Home</button>
+    <button id="nav-topics" type="button">Topics</button>
+    <button id="nav-quiz" type="button">Quiz</button>
+    <button id="nav-results" type="button">Results</button>
+    <button id="nav-grownups" type="button">For Grown-ups</button>
+    <button id="nav-howto" type="button">How to Play</button>
+  </div>
+
+  <section id="home" class="screen">
+    <div>
+      <h1>Little Discoverers</h1>
+      <p class="tag">Look. Choose. Discover.</p>
+    </div>
+    <div class="row samples">
+      <div class="card"><img alt="Cat" src="../LittleDiscoverers/Assets.xcassets/animal_cat.imageset/animal_cat.jpg"></div>
+      <div class="card"><img alt="Apple" src="../LittleDiscoverers/Assets.xcassets/fruit_apple.imageset/fruit_apple.jpg"></div>
+      <div class="card"><img alt="Car" src="../LittleDiscoverers/Assets.xcassets/vehicle_car.imageset/vehicle_car.jpg"></div>
+    </div>
+    <div class="actions">
+      <button class="ui" type="button" onclick="show('topics')">Let's Explore</button>
+      <button class="ui" type="button" onclick="show('howto')">How to Play</button>
+      <button class="ui" type="button" onclick="show('grownups')">For Grown-ups</button>
+    </div>
+  </section>
+
+  <section id="topics" class="screen">
+    <header class="top">
+      <h1>Choose a Topic</h1>
+      <button class="ui ghost" type="button" onclick="show('home')">Back to Home</button>
+    </header>
+    <div class="row grow">
+      <button class="ui ghost topic" type="button" onclick="startQuiz('animals')">
+        <img alt="" src="../LittleDiscoverers/Assets.xcassets/animal_cat.imageset/animal_cat.jpg">
+        <h2>Animals</h2>
+        <p>Meet five friendly animals.</p>
+        <p class="best" id="best-animals">No score yet</p>
+      </button>
+      <button class="ui ghost topic" type="button" onclick="startQuiz('fruits')">
+        <img alt="" src="../LittleDiscoverers/Assets.xcassets/fruit_apple.imageset/fruit_apple.jpg">
+        <h2>Fruits</h2>
+        <p>Name five colourful fruits.</p>
+        <p class="best" id="best-fruits">No score yet</p>
+      </button>
+      <button class="ui ghost topic" type="button" onclick="startQuiz('vehicles')">
+        <img alt="" src="../LittleDiscoverers/Assets.xcassets/vehicle_car.imageset/vehicle_car.jpg">
+        <h2>Vehicles</h2>
+        <p>Spot five ways to travel.</p>
+        <p class="best" id="best-vehicles">No score yet</p>
+      </button>
+    </div>
+  </section>
+
+  <section id="quiz" class="screen">
+    <header class="top meta">
+      <strong id="quiz-topic">Animals</strong>
+      <span id="quiz-count">Picture 1 of 5</span>
+      <span id="quiz-stars">0 of 5 first-try stars</span>
+    </header>
+    <div class="progress" id="quiz-progress"></div>
+    <div class="row quiz-main">
+      <div class="mystery">
+        <h2>What is this?</h2>
+        <img id="quiz-image" alt="Mystery picture" src="../LittleDiscoverers/Assets.xcassets/animal_cat.imageset/animal_cat.jpg">
+      </div>
+      <div class="answers">
+        <div id="quiz-choices"></div>
+        <div class="feedback" id="quiz-feedback"></div>
+        <div class="actions">
+          <button class="ui ghost" type="button" onclick="hear()">Hear Question</button>
+          <button class="ui" id="next-btn" type="button" disabled onclick="nextPicture()">Next Picture</button>
+          <button class="ui ghost" type="button" onclick="askLeave()">Leave Adventure</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="results" class="screen">
+    <div>
+      <h1>Wonderful exploring!</h1>
+      <p class="tag" id="results-topic">Animals</p>
+    </div>
+    <p class="stars" id="results-stars"></p>
+    <div>
+      <h2 id="results-score">This adventure: 0 of 5 first-try stars</h2>
+      <p class="meta" id="results-best">Best score: 0 of 5</p>
+      <p class="meta" id="results-note"></p>
+    </div>
+    <div class="actions">
+      <button class="ui" type="button" onclick="startQuiz(state.topic)">Play Again</button>
+      <button class="ui ghost" type="button" onclick="show('topics')">Choose a Topic</button>
+      <button class="ui ghost" type="button" onclick="show('home')">Back to Home</button>
+    </div>
+  </section>
+
+  <section id="grownups" class="screen">
+    <header class="top">
+      <div>
+        <h1>For Grown-ups</h1>
+        <p class="tag">Progress stays on this Apple TV.</p>
+      </div>
+      <button class="ui ghost" type="button" onclick="show('home')">Back to Home</button>
+    </header>
+    <div class="row" id="grown-stats"></div>
+    <div class="row grow">
+      <div class="panel stat">
+        <label class="meta"><input id="narration" type="checkbox" checked> Read questions aloud</label>
+        <button class="ui ghost" type="button" onclick="askReset()">Reset Saved Progress</button>
+      </div>
+      <div class="panel note">
+        A star is saved only when the first answer is correct. A later correct answer still finishes the picture, but it does not earn a star. Records in this preview stay in the page only. The real app uses UserDefaults on Apple TV.
+      </div>
+    </div>
+  </section>
+
+  <section id="howto" class="screen">
+    <h1>How to Play</h1>
+    <div class="steps">
+      <div class="step"><b>1</b><span>Choose Animals, Fruits, or Vehicles.</span></div>
+      <div class="step"><b>2</b><span>Move with the ring or swipe on the Siri Remote.</span></div>
+      <div class="step"><b>3</b><span>Press the clickpad to choose an answer.</span></div>
+      <div class="step"><b>4</b><span>A wrong choice turns off. You can try another answer.</span></div>
+      <div class="step"><b>5</b><span>After the right answer, move to Next Picture.</span></div>
+      <div class="step"><b>6</b><span>A star is earned only when the first answer is correct.</span></div>
+      <div class="step"><b>7</b><span>Menu during a quiz asks before leaving. An unfinished adventure is not saved.</span></div>
+    </div>
+    <div class="actions">
+      <button class="ui" type="button" onclick="show('topics')">Let's Explore</button>
+      <button class="ui ghost" type="button" onclick="show('home')">Back to Home</button>
+    </div>
+  </section>
+
+  <div class="modal" id="leave-modal">
+    <div class="dialog">
+      <h2>Leave this adventure?</h2>
+      <p>Stars from this unfinished adventure will not be saved.</p>
+      <div class="actions">
+        <button class="ui" type="button" onclick="closeModal('leave-modal')">Keep Playing</button>
+        <button class="ui ghost" type="button" onclick="confirmLeave()">Leave</button>
+      </div>
+    </div>
+  </div>
+  <div class="modal" id="reset-modal">
+    <div class="dialog">
+      <h2>Reset saved progress?</h2>
+      <p>Best scores, finished adventures, explored pictures, and dates will be cleared in this preview.</p>
+      <div class="actions">
+        <button class="ui" type="button" onclick="closeModal('reset-modal')">Cancel</button>
+        <button class="ui ghost" type="button" onclick="confirmReset()">Reset Progress</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+      { id: "animals-cat", topic: "animals", image: "animal_cat", answer: "Cat", choices: ["Dog", "Cat", "Rabbit"], fact: "Cats are mammals. They use whiskers to feel what is close to them." },
+      { id: "animals-dog", topic: "animals", image: "animal_dog", answer: "Dog", choices: ["Cat", "Dog", "Fish"], fact: "Dogs are mammals. A dog can learn words and signals from people." },
+      { id: "animals-elephant", topic: "animals", image: "animal_elephant", answer: "Elephant", choices: ["Rabbit", "Elephant", "Cat"], fact: "Elephants are the largest land animals. They use a trunk to smell, drink, and lift." },
+      { id: "animals-rabbit", topic: "animals", image: "animal_rabbit", answer: "Rabbit", choices: ["Cat", "Rabbit", "Dog"], fact: "Rabbits are mammals. Their long ears help them hear sounds around them." },
+      { id: "animals-fish", topic: "animals", image: "animal_fish", answer: "Fish", choices: ["Dog", "Fish", "Elephant"], fact: "Fish live in water. They breathe with gills instead of lungs." },
+      { id: "fruits-apple", topic: "fruits", image: "fruit_apple", answer: "Apple", choices: ["Banana", "Apple", "Orange"], fact: "Apples grow on trees. Their skin can be red, green, or yellow." },
+      { id: "fruits-banana", topic: "fruits", image: "fruit_banana", answer: "Banana", choices: ["Grapes", "Banana", "Apple"], fact: "Bananas grow in bunches. The fruit is soft and sweet inside a peel." },
+      { id: "fruits-orange", topic: "fruits", image: "fruit_orange", answer: "Orange", choices: ["Apple", "Orange", "Watermelon"], fact: "Oranges grow on trees. They are juicy citrus fruits." },
+      { id: "fruits-grapes", topic: "fruits", image: "fruit_grapes", answer: "Grapes", choices: ["Banana", "Grapes", "Orange"], fact: "Grapes grow in bunches on vines. A grape can be green, red, or purple." },
+      { id: "fruits-watermelon", topic: "fruits", image: "fruit_watermelon", answer: "Watermelon", choices: ["Apple", "Watermelon", "Grapes"], fact: "Watermelons grow on vines. They have a thick green rind and juicy flesh inside." },
+      { id: "vehicles-car", topic: "vehicles", image: "vehicle_car", answer: "Car", choices: ["Bus", "Car", "Train"], fact: "Cars travel on roads. Most cars have four wheels." },
+      { id: "vehicles-bus", topic: "vehicles", image: "vehicle_bus", answer: "Bus", choices: ["Car", "Bus", "Boat"], fact: "Buses travel on roads and carry many people. They stop so people can get on and off." },
+      { id: "vehicles-train", topic: "vehicles", image: "vehicle_train", answer: "Train", choices: ["Airplane", "Train", "Car"], fact: "Trains travel on tracks. They can carry people or goods." },
+      { id: "vehicles-boat", topic: "vehicles", image: "vehicle_boat", answer: "Boat", choices: ["Bus", "Boat", "Airplane"], fact: "Boats travel on water. Their shape helps them float." },
+      { id: "vehicles-airplane", topic: "vehicles", image: "vehicle_airplane", answer: "Airplane", choices: ["Train", "Airplane", "Boat"], fact: "Airplanes fly through the air. Their wings help lift them." }
+    ];
+    const titles = { animals: "Animals", fruits: "Fruits", vehicles: "Vehicles" };
+    const state = { topic: "animals", order: [], index: 0, stars: 0, wrong: [], solved: false, attempts: 0 };
+    const progress = { animals: { best: 0, count: 0, seen: [] }, fruits: { best: 0, count: 0, seen: [] }, vehicles: { best: 0, count: 0, seen: [] } };
+
+    function src(name) { return `../LittleDiscoverers/Assets.xcassets/${name}.imageset/${name}.jpg`; }
+    function show(id) {
+      document.querySelectorAll(".screen").forEach(s => s.classList.toggle("on", s.id === id));
+      document.querySelectorAll(".bar button").forEach(b => b.classList.toggle("on", b.id === "nav-" + id));
+      if (id === "topics") paintTopics();
+      if (id === "grownups") paintGrownups();
+      if (id === "results") paintResults();
+    }
+    function startQuiz(topic) {
+      state.topic = topic;
+      state.order = questions.filter(q => q.topic === topic).sort(() => Math.random() - 0.5);
+      state.index = 0; state.stars = 0; state.wrong = []; state.solved = false; state.attempts = 0;
+      show("quiz");
+      paintQuestion();
+    }
+    function current() { return state.order[state.index]; }
+    function paintQuestion() {
+      const q = current();
+      document.getElementById("quiz-topic").textContent = titles[state.topic];
+      document.getElementById("quiz-count").textContent = `Picture ${state.index + 1} of 5`;
+      document.getElementById("quiz-stars").textContent = `${state.stars} of 5 first-try stars`;
+      document.getElementById("quiz-image").src = src(q.image);
+      document.getElementById("quiz-progress").innerHTML = Array.from({ length: 5 }, (_, i) => `<i class="${i < state.index || (i === state.index && state.solved) ? "done" : ""}"></i>`).join("");
+      document.getElementById("quiz-choices").innerHTML = q.choices.map(choice => {
+        const wrong = state.wrong.includes(choice);
+        const right = state.solved && choice === q.answer;
+        const mark = right ? "✓ Well done" : wrong ? "✕ Not this one" : "";
+        return `<button class="ui ghost answer" ${wrong || state.solved ? "disabled" : ""} onclick="choose('${choice}')"><span>${choice}</span><span>${mark}</span></button>`;
+      }).join("");
+      const feedback = document.getElementById("quiz-feedback");
+      feedback.innerHTML = "";
+      document.getElementById("next-btn").disabled = !state.solved;
+    }
+    function choose(choice) {
+      const q = current();
+      if (state.solved || state.wrong.includes(choice) || !q.choices.includes(choice)) return;
+      state.attempts += 1;
+      const feedback = document.getElementById("quiz-feedback");
+      if (choice === q.answer) {
+        state.solved = true;
+        if (state.attempts === 1) state.stars += 1;
+        feedback.innerHTML = `<span class="ok">✓</span><span>Well done! ${q.fact}</span>`;
+      } else {
+        state.wrong.push(choice);
+        feedback.innerHTML = `<span class="try">↺</span><span>Good try! Choose another answer.</span>`;
+      }
+      paintQuestion();
+      if (state.solved) feedback.innerHTML = `<span class="ok">✓</span><span>Well done! ${q.fact}</span>`;
+      else feedback.innerHTML = `<span class="try">↺</span><span>Good try! Choose another answer.</span>`;
+    }
+    function nextPicture() {
+      if (!state.solved) return;
+      if (state.index === 4) { finish(); return; }
+      state.index += 1; state.wrong = []; state.solved = false; state.attempts = 0;
+      paintQuestion();
+    }
+    function finish() {
+      const item = progress[state.topic];
+      item.best = Math.max(item.best, state.stars);
+      item.count += 1;
+      state.order.forEach(q => { if (!item.seen.includes(q.id)) item.seen.push(q.id); });
+      show("results");
+    }
+    function encouragement(stars) {
+      if (stars === 5) return "You knew every picture on the first try.";
+      if (stars >= 3) return "You are becoming a careful explorer.";
+      if (stars >= 1) return "You kept trying, and that is how we learn.";
+      return "You finished the adventure. Trying again will help these pictures stick.";
+    }
+    function paintResults() {
+      document.getElementById("results-topic").textContent = titles[state.topic];
+      document.getElementById("results-stars").innerHTML = Array.from({ length: 5 }, (_, i) => `<span class="${i < state.stars ? "" : "empty"}">★</span>`).join("");
+      document.getElementById("results-score").textContent = `This adventure: ${state.stars} of 5 first-try stars`;
+      document.getElementById("results-best").textContent = `Best score: ${progress[state.topic].best} of 5`;
+      document.getElementById("results-note").textContent = encouragement(state.stars);
+    }
+    function paintTopics() {
+      for (const topic of ["animals", "fruits", "vehicles"]) {
+        const best = progress[topic].best;
+        document.getElementById("best-" + topic).textContent = best ? `Best: ${best} of 5 stars` : "No score yet";
+      }
+    }
+    function paintGrownups() {
+      document.getElementById("grown-stats").innerHTML = ["animals", "fruits", "vehicles"].map(topic => {
+        const item = progress[topic];
+        return `<div class="panel stat grow"><strong>${titles[topic]}</strong><span>Best: ${item.best} of 5</span><span>Finished adventures: ${item.count}</span><span>Pictures explored: ${item.seen.length} of 5</span></div>`;
+      }).join("");
+    }
+    function hear() {
+      const q = current();
+      const feedback = document.getElementById("quiz-feedback");
+      if (!document.getElementById("narration").checked) {
+        feedback.innerHTML = "<span>Narration is turned off. A grown-up can turn it on in For Grown-ups.</span>";
+        return;
+      }
+      feedback.innerHTML = `<span>What is this? The choices are ${q.choices.join(", ")}.</span>`;
+      if (window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(new SpeechSynthesisUtterance(`What is this? The choices are ${q.choices.join(", ")}.`));
+      }
+    }
+    function askLeave() { document.getElementById("leave-modal").classList.add("on"); }
+    function confirmLeave() { closeModal("leave-modal"); show("topics"); }
+    function askReset() { document.getElementById("reset-modal").classList.add("on"); }
+    function confirmReset() {
+      for (const topic of Object.keys(progress)) progress[topic] = { best: 0, count: 0, seen: [] };
+      closeModal("reset-modal");
+      paintGrownups();
+    }
+    function closeModal(id) { document.getElementById(id).classList.remove("on"); }
+    document.querySelectorAll(".bar button").forEach(button => button.addEventListener("click", () => {
+      const id = button.id.replace("nav-", "");
+      if (id === "quiz") startQuiz("animals");
+      else show(id);
+    }));
+    show("home");
+  </script>
+</body>
+</html>

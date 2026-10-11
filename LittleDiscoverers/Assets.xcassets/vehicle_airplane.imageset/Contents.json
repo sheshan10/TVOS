@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "vehicle_airplane.jpg",
+      "idiom" : "tv"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

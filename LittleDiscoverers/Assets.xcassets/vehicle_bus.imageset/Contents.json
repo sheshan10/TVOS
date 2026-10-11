@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "vehicle_bus.jpg",
+      "idiom" : "tv"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

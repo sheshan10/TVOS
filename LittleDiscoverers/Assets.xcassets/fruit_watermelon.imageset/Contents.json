@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "fruit_watermelon.jpg",
+      "idiom" : "tv"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
